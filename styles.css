@@ -1,0 +1,139 @@
+body {
+  margin: 0;
+  font-family: 'Patrick Hand', cursive;
+  background: #f5f5f5;
+}
+
+.note-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.note-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 20px;
+}
+
+/* Overlay content styles 
+.title {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Fredoka', sans-serif;
+  font-size: 50px;
+  font-weight: 500;
+  color: #8B72B0;
+}*/
+
+
+.clear-btn {
+  position: absolute;
+  bottom: 32px;
+  right: 20px;
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  border-radius: none;
+  color: #8B72B0;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 24px;
+  cursor: pointer;
+  transition: 0.3s;
+  
+}
+
+.clear-btn:hover {
+  background: none;
+}
+
+.clear-btn:disabled{
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+ li {
+  display: flex;
+  align-items: center;
+  min-height: 24px; /* Adjust based on the space between your dashed lines */
+  position: relative;
+}
+
+#notes-list {
+  position: absolute;
+  top: 138px; /* Adjust this based on your dashed line position */
+  left: -8px; /* Adjust this based on where the dashed line starts horizontally */
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#notes-list li {
+  display: flex;
+  margin-bottom: 20.5px;
+  margin-top: 18.5px;
+}
+
+/*#notes-list li::before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #a288d9;
+  margin-right: 14px;
+}*/
+
+.editable {
+  font-family: 'Patrick Hand', cursive;
+  line-height: 34px;
+  font-size: 24px;
+  color: #5C3D8C;
+  outline: none;
+  min-width: unset;
+  width: 400px; /* adjust as per your dashed line length */
+  height: 32px; /* smaller height to align with line height */
+  background: transparent; /* remove white background */
+  border: none; /* remove default border */
+  padding: 0;
+}
+
+/* When user focuses or types */
+.editable:focus {
+  background: transparent;
+  box-shadow: none;
+}
+.circle {
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #BA9EDC;
+  border-radius: 50%;
+  margin-right: 12px;
+  flex-shrink: 0;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+
+.circle.checked {
+  background-color: #6a4dad;
+}
+
+.circle.checked::after {
+  content: '✔';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  color: #fff;
+}
+.completed {
+  text-decoration: line-through;
+  opacity: 0.6;
+}

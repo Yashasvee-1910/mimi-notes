@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mimi Notes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="note-wrapper">
+    <img src="assets/B.svg" alt="decorative background" class="note-bg" />
+
+    <button class="clear-btn" id="clear-btn" disabled>Clear all</button>
+
+    <div id="notes-list">
+      <ul>
+        <!-- Your initial 6 items -->
+        <li>
+          <div class="circle"></div>
+          <div class="editable" contenteditable="true"></div>
+        </li>
+        <li>
+          <div class="circle"></div>
+          <div class="editable" contenteditable="true"></div>
+        </li>
+        <li>
+          <div class="circle"></div>
+          <div class="editable" contenteditable="true"></div>
+        </li>
+        <li>
+          <div class="circle"></div>
+          <div class="editable" contenteditable="true"></div>
+        </li>
+        <li>
+          <div class="circle"></div>
+          <div class="editable" contenteditable="true"></div>
+        </li>
+        <li>
+          <div class="circle"></div>
+          <div class="editable" contenteditable="true"></div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const list = document.querySelector('#notes-list ul');
+    const clearBtn = document.getElementById('clear-btn');
+
+    // Load saved data
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = JSON.parse(localStorage.getItem('mimi-notes')) || [];
+      const items = list.querySelectorAll('li');
+
+      saved.forEach((item, i) => {
+        if (items[i]) {
+          const editable = items[i].querySelector('.editable');
+          const circle = items[i].querySelector('.circle');
+          editable.innerText = item.text || '';
+          if (item.done) {
+            circle.classList.add('checked');
+            editable.classList.add('completed');
+          }
+        }
+      });
+
+      updateClearButton();
+    });
+
+    // Save data to local storage
+    function saveToStorage() {
+      const data = [...list.querySelectorAll('li')].map(li => ({
+        text: li.querySelector('.editable').innerText.trim(),
+        done: li.querySelector('.circle').classList.contains('checked')
+      }));
+      localStorage.setItem('mimi-notes', JSON.stringify(data));
+    }
+
+    // Listen for Enter key to prevent newlines
+    list.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+      }
+    });
+
+    // Clear all with haptic-like feedback
+    clearBtn.addEventListener('click', () => {
+      const editables = list.querySelectorAll('.editable');
+      editables.forEach(editable => {
+        editable.innerText = '';
+        editable.classList.remove('completed');
+      });
+
+      const circles = list.querySelectorAll('.circle');
+      circles.forEach(circle => {
+        circle.classList.remove('checked');
+      });
+
+      localStorage.removeItem('mimi-notes');
+      updateClearButton();
+
+      // Simulate "haptic" by animating the button
+      clearBtn.classList.add('haptic');
+      setTimeout(() => {
+        clearBtn.classList.remove('haptic');
+      }, 150);
+    });
+
+    // Unified click handler for the circle
+    list.addEventListener('click', (e) => {
+      if (e.target.classList.contains('circle')) {
+        e.target.classList.toggle('checked');
+        const editable = e.target.nextElementSibling;
+        if (editable) {
+          editable.classList.toggle('completed');
+        }
+        saveToStorage();
+        updateClearButton();
+      }
+    });
+
+    // Save input on typing & update button
+    list.querySelectorAll('.editable').forEach(editable => {
+      editable.addEventListener('input', () => {
+        saveToStorage();
+        updateClearButton();
+      });
+    });
+
+    // Update Clear Button State
+    function updateClearButton() {
+      const hasContent = [...list.querySelectorAll('.editable')].some(editable => editable.innerText.trim() !== '');
+      const hasChecked = [...list.querySelectorAll('.circle')].some(circle => circle.classList.contains('checked'));
+      clearBtn.disabled = !(hasContent || hasChecked);
+    }
+  </script>
+
+  <style>
+    /* ✨ Simple haptic feedback with scale animation */
+    #clear-btn.haptic {
+      transform: scale(0.95);
+      transition: transform 0.15s ease;
+    }
+  </style>
+</body>
+
+</html>
