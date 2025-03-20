@@ -17,7 +17,7 @@
 
     <div id="notes-list">
       <ul>
-        <!-- Your initial 6 items -->
+        <!-- 6 fixed items -->
         <li>
           <div class="circle"></div>
           <div class="editable" contenteditable="true"></div>
@@ -52,9 +52,12 @@
 
     // Load saved data
     window.addEventListener('DOMContentLoaded', () => {
+      loadFromStorage();
+    });
+
+    function loadFromStorage() {
       const saved = JSON.parse(localStorage.getItem('mimi-notes')) || [];
       const items = list.querySelectorAll('li');
-
       saved.forEach((item, i) => {
         if (items[i]) {
           const editable = items[i].querySelector('.editable');
@@ -66,11 +69,9 @@
           }
         }
       });
-
       updateClearButton();
-    });
+    }
 
-    // Save data to local storage
     function saveToStorage() {
       const data = [...list.querySelectorAll('li')].map(li => ({
         text: li.querySelector('.editable').innerText.trim(),
@@ -79,37 +80,14 @@
       localStorage.setItem('mimi-notes', JSON.stringify(data));
     }
 
-    // Listen for Enter key to prevent newlines
+    // Prevent Enter key from creating new lines
     list.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
+      if (e.target.classList.contains('editable') && e.key === 'Enter') {
         e.preventDefault();
       }
     });
 
-    // Clear all with haptic-like feedback
-    clearBtn.addEventListener('click', () => {
-      const editables = list.querySelectorAll('.editable');
-      editables.forEach(editable => {
-        editable.innerText = '';
-        editable.classList.remove('completed');
-      });
-
-      const circles = list.querySelectorAll('.circle');
-      circles.forEach(circle => {
-        circle.classList.remove('checked');
-      });
-
-      localStorage.removeItem('mimi-notes');
-      updateClearButton();
-
-      // Simulate "haptic" by animating the button
-      clearBtn.classList.add('haptic');
-      setTimeout(() => {
-        clearBtn.classList.remove('haptic');
-      }, 150);
-    });
-
-    // Unified click handler for the circle
+    // Toggle check on circle click
     list.addEventListener('click', (e) => {
       if (e.target.classList.contains('circle')) {
         e.target.classList.toggle('checked');
@@ -122,15 +100,40 @@
       }
     });
 
-    // Save input on typing & update button
-    list.querySelectorAll('.editable').forEach(editable => {
-      editable.addEventListener('input', () => {
-        saveToStorage();
-        updateClearButton();
+    // Listen for input inside editables
+    list.addEventListener('input', (e) => {
+  if (e.target.classList.contains('editable')) {
+    saveToStorage();
+    updateClearButton();
+  }
+});
+
+
+    // Clear all logic
+    clearBtn.addEventListener('click', () => {
+      const editables = list.querySelectorAll('.editable');
+      const circles = list.querySelectorAll('.circle');
+
+      editables.forEach(editable => {
+        editable.innerText = '';
+        editable.classList.remove('completed');
       });
+
+      circles.forEach(circle => {
+        circle.classList.remove('checked');
+      });
+
+      localStorage.removeItem('mimi-notes');
+      updateClearButton();
+
+      // Simulate haptic feedback
+      clearBtn.classList.add('haptic');
+      setTimeout(() => {
+        clearBtn.classList.remove('haptic');
+      }, 150);
     });
 
-    // Update Clear Button State
+    // Enable/Disable Clear Button based on content
     function updateClearButton() {
       const hasContent = [...list.querySelectorAll('.editable')].some(editable => editable.innerText.trim() !== '');
       const hasChecked = [...list.querySelectorAll('.circle')].some(circle => circle.classList.contains('checked'));

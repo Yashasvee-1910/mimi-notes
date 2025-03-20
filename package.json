@@ -1,13 +1,39 @@
-
 {
+  "author": "Yashasvee <Shedesigner19@gmail.com>",
+  "productName": "Mimi Notes",
   "name": "mimi-notes",
   "version": "1.0.0",
-  "description": "Mimi Notes desktop app",
+  "description": "A simple notes app",
   "main": "main.js",
+  "build": {
+    "appId": "com.yourname.miminotes",
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icons/mimi.icns" 
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/electron/dist/**",
+      "!node_modules/.bin",
+      "!node_modules/**/test/**",
+      "!node_modules/**/docs/**",
+      "!node_modules/**/examples/**",
+      "!node_modules/**/*.md",
+      "!node_modules/**/*.map"
+    ]
+  },
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "dependencies": {
+    
+  },
+  "devDependencies": {
+    "electron": "^35.0.2",
+    "electron-builder": "^24.9.1"
   }
 }
-
-
-
